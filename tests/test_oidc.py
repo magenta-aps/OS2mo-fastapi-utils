@@ -62,7 +62,7 @@ class TestOIDC(unittest.TestCase):
         }
 
         self.auth = get_auth_dependency(
-            "http", "keycloak", 8080, "mo", "RS256", "service/token"
+            "http", "keycloak", 8080, "mo", "RS256", "service/token", Token
         )
 
         # For the async tests

@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2019-2020 Magenta ApS
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Any
+from typing import Any, Type, TypeVar
 
 import jwt.exceptions
 from fastapi import Depends, Request
@@ -12,9 +12,17 @@ from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_500_INTERNAL_SERVER_ERR
 from os2mo_fastapi_utils.auth.exceptions import AuthenticationError
 from os2mo_fastapi_utils.auth.models import Token
 
+TokenModel = TypeVar("TokenModel", bound=Token)
+
 
 def get_auth_dependency(
-    http_schema: str, host: str, port: int, realm: str, alg: str, token_url_path: str
+    http_schema: str,
+    host: str,
+    port: int,
+    realm: str,
+    alg: str,
+    token_url_path: str,
+    token_model: Type[TokenModel],
 ):
     # URI for obtaining JSON Web Key Set (JWKS), i.e. the public Keycloak key
     JWKS_URI = (
@@ -28,7 +36,7 @@ def get_auth_dependency(
     # For getting and parsing the Authorization header
     oauth2_scheme = OAuth2PasswordBearer(tokenUrl=token_url_path)
 
-    async def keycloak_auth(token: str = Depends(oauth2_scheme)) -> Token:
+    async def keycloak_auth(token: str = Depends(oauth2_scheme)) -> TokenModel:
         """
         Ensure the caller has a valid OIDC token, i.e. that the Authorization
         header is set with a valid bearer token.
@@ -81,7 +89,7 @@ def get_auth_dependency(
             # auth_exception_handler below which is used by the FastAPI app.
 
             decoded_token: dict = jwt.decode(token, signing.key, algorithms=[alg])
-            return Token.parse_obj(decoded_token)
+            return token_model.parse_obj(decoded_token)
 
         except Exception as err:
             raise AuthenticationError(err)
