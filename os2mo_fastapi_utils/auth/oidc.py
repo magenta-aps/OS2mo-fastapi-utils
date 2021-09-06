@@ -20,9 +20,9 @@ def get_auth_dependency(
     port: int,
     realm: str,
     token_url_path: str,
+    token_model: Type[TokenModel],
     http_schema: str = "http",
     alg: str = "RS256",
-    token_model: Type[TokenModel] = Token,
 ):
     # URI for obtaining JSON Web Key Set (JWKS), i.e. the public Keycloak key
     JWKS_URI = (

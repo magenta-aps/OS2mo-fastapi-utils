@@ -66,7 +66,7 @@ class TestOIDC(unittest.TestCase):
             port=8080,
             realm="mo",
             token_url_path="service/token",
-            token_model=Token
+            token_model=Token,
         )
 
         # For the async tests
