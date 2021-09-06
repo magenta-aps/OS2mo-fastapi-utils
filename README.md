@@ -39,7 +39,7 @@ from fastapi import FastAPI, Depends
 from os2mo_fastapi_utils.auth.oidc import get_auth_dependency
 from os2mo_fastapi_utils.auth.oidc import Token
 
-auth = get_auth_dependency('http', 'keycloak', 8081, 'mo', 'RS256')
+auth = get_auth_dependency(http_schema='http', host='keycloak', port=8081, realm='mo', alg='RS256')
 
 app = FastAPI()
 
