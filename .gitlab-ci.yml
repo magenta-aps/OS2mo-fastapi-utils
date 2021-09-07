@@ -102,7 +102,7 @@ Unit-test:
 Release dev:
   <<: *release-default
   rules:
-    - if: $CI_COMMIT_REF_NAME == "master"
+    - if: $CI_COMMIT_REF_NAME == "temp"
   script:
     - python3 -m twine upload --username ${RELEASE_PYPI_USERNAME} --password ${RELEASE_PYPI_PASSWORD} --repository testpypi dist/*
 
