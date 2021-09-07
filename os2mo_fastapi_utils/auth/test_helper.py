@@ -48,23 +48,16 @@ class TestServiceAuth(unittest.TestCase):
         # auth function in the mora.auth.keycloak.oidc sub-module.
 
         # Skip the starlette.routing.Route's (defined by the framework)
-        routes = filter(
-            lambda route: isinstance(route, APIRoute),
-            self.all_routes
-        )
+        routes = filter(lambda route: isinstance(route, APIRoute), self.all_routes)
         # Only check endpoints not in the NO_AUTH_ENDPOINTS list
-        routes = filter(
-            lambda route: route.path not in self.no_auth_endpoints,
-            routes
-        )
+        routes = filter(lambda route: route.path not in self.no_auth_endpoints, routes)
         for route in routes:
             has_auth = self.lookup_auth_dependency(route)
             assert has_auth, f"Route not protected: {route.path}"
 
     def test_ensure_no_auth_endpoints_do_not_depend_on_auth_function(self):
         no_auth_routes = filter(
-            lambda route: route.path in self.no_auth_endpoints,
-            self.all_routes
+            lambda route: route.path in self.no_auth_endpoints, self.all_routes
         )
         for route in no_auth_routes:
             has_auth = self.lookup_auth_dependency(route)
