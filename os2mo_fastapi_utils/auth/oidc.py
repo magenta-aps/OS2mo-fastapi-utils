@@ -24,6 +24,7 @@ def get_auth_dependency(
     http_schema: str = "http",
     alg: str = "RS256",
     verify_audience: bool = True,
+    audience=None,
 ):
     # URI for obtaining JSON Web Key Set (JWKS), i.e. the public Keycloak key
     JWKS_URI = (
@@ -97,6 +98,7 @@ def get_auth_dependency(
                 token,
                 signing.key,
                 algorithms=[alg],
+                audience=audience,
                 options={"verify_aud": verify_audience},
             )
             return token_model.parse_obj(decoded_token)
