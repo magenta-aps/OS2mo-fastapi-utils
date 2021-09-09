@@ -10,6 +10,7 @@ from cryptography.hazmat.primitives import serialization
 from fastapi.exceptions import HTTPException
 from jwt.exceptions import (
     ExpiredSignatureError,
+    InvalidAudienceError,
     InvalidSignatureError,
     InvalidTokenError,
     PyJWTError,
@@ -167,6 +168,71 @@ class TestOIDC(unittest.TestCase):
         token = jwt.encode(self.parsed_token, self.private_key, algorithm="RS256")
 
         mock_get_signing_key_from_jwt.assert_called_once_with(token)
+
+    @unittest.mock.patch(
+        "os2mo_fastapi_utils.auth.oidc.jwt.PyJWKClient.get_signing_key_from_jwt"
+    )
+    def test_exception_when_aud_in_token_and_audience_is_not_set(
+        self, mock_get_signing_key_from_jwt
+    ):
+        # Mock the public signing.key used in the auth function
+        mock_get_signing_key_from_jwt.side_effect = [self.signing]
+
+        # Set aud in token
+        self.parsed_token["aud"] = "mo"
+        token = TestOIDC.generate_token(self.parsed_token, self.private_key)
+
+        with self.assertRaises(AuthenticationError) as err:
+            self.loop.run_until_complete(self.auth(token))
+            self.assertTrue(isinstance(err.exception.exc, InvalidAudienceError))
+
+    @unittest.mock.patch(
+        "os2mo_fastapi_utils.auth.oidc.jwt.PyJWKClient.get_signing_key_from_jwt"
+    )
+    def test_token_accepted_when_aud_in_token_and_audience_is_set(
+        self, mock_get_signing_key_from_jwt
+    ):
+        # Mock the public signing.key used in the auth function
+        mock_get_signing_key_from_jwt.side_effect = [self.signing]
+
+        # Set aud in token
+        self.parsed_token["aud"] = "mo"
+        token = TestOIDC.generate_token(self.parsed_token, self.private_key)
+
+        auth = get_auth_dependency(
+            host="keycloak",
+            port=8080,
+            realm="mo",
+            token_url_path="service/token",
+            token_model=Token,
+            audience="mo",
+        )
+
+        assert self.loop.run_until_complete(auth(token))
+
+    @unittest.mock.patch(
+        "os2mo_fastapi_utils.auth.oidc.jwt.PyJWKClient.get_signing_key_from_jwt"
+    )
+    def test_token_accepted_when_aud_in_token_and_verify_aud_is_false(
+        self, mock_get_signing_key_from_jwt
+    ):
+        # Mock the public signing.key used in the auth function
+        mock_get_signing_key_from_jwt.side_effect = [self.signing]
+
+        # Set aud in token
+        self.parsed_token["aud"] = "mo"
+        token = TestOIDC.generate_token(self.parsed_token, self.private_key)
+
+        auth = get_auth_dependency(
+            host="keycloak",
+            port=8080,
+            realm="mo",
+            token_url_path="service/token",
+            token_model=Token,
+            verify_audience=False,
+        )
+
+        assert self.loop.run_until_complete(auth(token))
 
 
 class TestAuthError(unittest.TestCase):
