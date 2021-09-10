@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2019-2020 Magenta ApS
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Any, Type, TypeVar
+from typing import Any, List, Type, TypeVar, Union
 
 import jwt.exceptions
 from fastapi import Depends, Request
@@ -24,7 +24,7 @@ def get_auth_dependency(
     http_schema: str = "http",
     alg: str = "RS256",
     verify_audience: bool = True,
-    audience=None,
+    audience: Union[str, List[str], None] = None,
 ):
     # URI for obtaining JSON Web Key Set (JWKS), i.e. the public Keycloak key
     JWKS_URI = (
