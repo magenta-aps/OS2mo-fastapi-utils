@@ -12,12 +12,19 @@ def lookup_auth_dependency(route, auth_coro):
 def ensure_endpoints_depend_on_oidc_auth_function(
     all_routes, no_auth_endpoints, auth_coro
 ):
-    # A little risky since we should avoid "logic" in the test code!
-    # (so direct auth "requests" tests should also be added)
+    """
+    Loop through all FastAPI routes (except the ones from the above
+    exclude list) and make sure they depend (via fastapi.Depends) on the
+    auth coroutine.
 
-    # Loop through all FastAPI routes (except the ones from the above
-    # exclude list) and make sure they depend (via fastapi.Depends) on the
-    # auth coroutine.
+    A little risky since we should avoid "logic" in the test code!
+    (so direct auth "requests" tests should also be added)
+
+    :param all_routes: all routes defined in the FastAPI app
+    :param no_auth_endpoints: list of all endpoint URL path that should not
+    have authentication
+    :param auth_coro: the authentication coroutine
+    """
 
     # Skip the starlette.routing.Route's (defined by the framework)
     routes = filter(lambda _route: isinstance(_route, APIRoute), all_routes)
@@ -36,6 +43,17 @@ def ensure_endpoints_depend_on_oidc_auth_function(
 def ensure_no_auth_endpoints_do_not_depend_on_auth_function(
     all_routes, no_auth_endpoints, auth_coro
 ):
+    """
+    Loop through the FastAPI routes that do not require authentication
+    (except the ones from the above exclude list) and make sure they do not
+    depend (via fastapi.Depends) on the auth coroutine.
+
+    :param all_routes: all routes defined in the FastAPI app
+    :param no_auth_endpoints: list of all endpoint URL path that should not
+    have authentication
+    :param auth_coro: the authentication coroutine
+    """
+
     no_auth_routes = filter(lambda _route: _route.path in no_auth_endpoints, all_routes)
     for route in no_auth_routes:
         has_auth = lookup_auth_dependency(route, auth_coro)
