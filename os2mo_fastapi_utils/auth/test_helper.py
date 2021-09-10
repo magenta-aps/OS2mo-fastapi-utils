@@ -23,9 +23,10 @@ def ensure_endpoints_depend_on_oidc_auth_function(
     routes = filter(lambda _route: isinstance(_route, APIRoute), all_routes)
     # Only check endpoints not in the NO_AUTH_ENDPOINTS list
     routes = filter(lambda _route: _route.path not in no_auth_endpoints, routes)
+    routes = list(routes)
 
     # Make sure that routes are defined
-    assert list(routes)
+    assert routes
 
     for route in routes:
         has_auth = lookup_auth_dependency(route, auth_coro)
