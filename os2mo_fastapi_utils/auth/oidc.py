@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2019-2020 Magenta ApS
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Any, Type, TypeVar
+from typing import Any, List, Type, TypeVar, Union
 
 import jwt.exceptions
 from fastapi import Depends, Request
@@ -23,6 +23,8 @@ def get_auth_dependency(
     token_model: Type[TokenModel],
     http_schema: str = "http",
     alg: str = "RS256",
+    verify_audience: bool = True,
+    audience: Union[str, List[str], None] = None,
 ):
     # URI for obtaining JSON Web Key Set (JWKS), i.e. the public Keycloak key
     JWKS_URI = (
@@ -88,7 +90,18 @@ def get_auth_dependency(
             # token is invalid. These exceptions will be caught by the
             # auth_exception_handler below which is used by the FastAPI app.
 
-            decoded_token: dict = jwt.decode(token, signing.key, algorithms=[alg])
+            # The audience verification can be disabled (aud
+            # claim in the token) when all services in the stack trust
+            # each other
+            # (see https://www.keycloak.org/docs/latest/server_admin/index.html#_audience)
+            decoded_token: dict = jwt.decode(
+                token,
+                signing.key,
+                algorithms=[alg],
+                audience=audience,
+                options={"verify_aud": verify_audience},
+            )
+
             return token_model.parse_obj(decoded_token)
 
         except Exception as err:
