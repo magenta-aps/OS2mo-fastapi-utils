@@ -51,6 +51,7 @@ def setup_instrumentation(app):
         _JAEGER_EXPORTER = JaegerExporter(
             agent_host_name=settings.jaeger_hostname,
             agent_port=settings.jaeger_port,
+            udp_split_oversized_batches=True,
         )
 
         _TRACE_PROVIDER.add_span_processor(BatchSpanProcessor(_JAEGER_EXPORTER))
