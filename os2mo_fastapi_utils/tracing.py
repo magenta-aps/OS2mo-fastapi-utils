@@ -12,6 +12,7 @@ from opentelemetry import trace
 from opentelemetry.exporter.jaeger.thrift import JaegerExporter
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
@@ -58,6 +59,7 @@ def setup_instrumentation(app):
 
     AioHttpClientInstrumentor().instrument()
     RequestsInstrumentor().instrument()
+    HTTPXClientInstrumentor().instrument()
 
     # Register logging middleware
     app.middleware("http")(_log_requests_middleware)
