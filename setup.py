@@ -9,7 +9,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="os2mo-fastapi-utils",
-    version="1.0.1",
+    version="1.1.0",
     author="Magenta ApS",
     author_email="info@magenta.dk",
     description="Utility library with various reusable FastAPI components",
@@ -24,6 +24,7 @@ setuptools.setup(
     ],
     install_requires=[
         "fastapi",
+        "httpx",
         "pydantic[email]",
         "opentelemetry-api",
         "opentelemetry-sdk",
@@ -31,6 +32,7 @@ setuptools.setup(
         "opentelemetry-instrumentation-aiohttp-client",
         "opentelemetry-instrumentation-requests",
         "opentelemetry-instrumentation-fastapi",
+        "opentelemetry-instrumentation-httpx",
         "pyjwt[crypto]",
         "structlog",
     ],
