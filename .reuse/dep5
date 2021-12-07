@@ -1,0 +1,8 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: os2mo fastapi utils
+Upstream-Contact: Magenta ApS <info@magenta.dk>
+
+Files: *.md *.template
+Copyright: 2021 Magenta ApS <https://magenta.dk>
+License: MPL-2.0
+
