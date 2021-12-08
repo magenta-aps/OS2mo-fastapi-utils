@@ -2,9 +2,24 @@
 #
 # SPDX-License-Identifier: MPL-2.0
 
+[tool.poetry]
+name = "os2mo-fastapi-utils"
+version = "1.1.0"
+description = "FastAPI utils for os2mo"
+authors = ["Magenta <info@magenta.dk>"]
+license = "MPL-2.0"
+readme = "README.md"
+homepage = "https://magenta.dk/"
+repository = "https://git.magenta.dk/rammearkitektur/os2mo-fastapi-utils"
+keywords = ["os2mo-fastapi-utils", "os2mo", "fastapi", "utils"]
+
 [build-system]
 requires = [
     "setuptools>=42",
     "wheel"
 ]
 build-backend = "setuptools.build_meta"
+
+[tool.autopub]
+git-username = "MagentaBot"
+git-email = "info@magenta.dk"
