@@ -100,6 +100,7 @@ def get_auth_dependency(
                 algorithms=[alg],
                 audience=audience,
                 options={"verify_aud": verify_audience},
+                leeway=5,
             )
 
             return token_model.parse_obj(decoded_token)
