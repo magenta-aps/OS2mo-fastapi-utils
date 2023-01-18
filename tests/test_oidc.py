@@ -124,6 +124,29 @@ class TestOIDC(unittest.TestCase):
     @unittest.mock.patch(
         "os2mo_fastapi_utils.auth.oidc.jwt.PyJWKClient.get_signing_key_from_jwt"
     )
+    def test_leeway(self, mock_get_signing_key_from_jwt):
+        # Mock the public signing.key used in the auth function
+        mock_get_signing_key_from_jwt.side_effect = [self.signing]
+
+        # Set "exp" to a slightly expired timestamp
+        self.parsed_token["exp"] = int(datetime.now().timestamp()) - 3
+
+        # Create auth request with token signed by correct key
+        token = TestOIDC.generate_token(self.parsed_token, self.private_key)
+
+        actual_token = self.loop.run_until_complete(self.auth(token))
+        expected_token = Token(
+            azp="mo",
+            email="bruce@kung.fu",
+            preferred_username="bruce",
+            uuid=UUID("99e7b256-7dfa-4ee8-95c6-e3abe82e236a"),
+        )
+
+        self.assertEqual(expected_token, actual_token)
+
+    @unittest.mock.patch(
+        "os2mo_fastapi_utils.auth.oidc.jwt.PyJWKClient.get_signing_key_from_jwt"
+    )
     def test_raise_exception_for_invalid_signature(self, mock_get_signing_key_from_jwt):
         # Mock the public signing.key used in the auth function
         mock_get_signing_key_from_jwt.side_effect = [self.signing]
@@ -146,7 +169,7 @@ class TestOIDC(unittest.TestCase):
         mock_get_signing_key_from_jwt.side_effect = [self.signing]
 
         # Set "exp" to an expired timestamp
-        self.parsed_token["exp"] = int(datetime.now().timestamp()) - 1
+        self.parsed_token["exp"] = int(datetime.now().timestamp()) - 6
 
         # Create auth request with token signed by correct key
         token = TestOIDC.generate_token(self.parsed_token, self.private_key)
