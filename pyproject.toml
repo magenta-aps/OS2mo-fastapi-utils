@@ -12,6 +12,7 @@ readme = "README.md"
 homepage = "https://magenta.dk/"
 repository = "https://git.magenta.dk/rammearkitektur/os2mo-fastapi-utils"
 keywords = ["os2mo-fastapi-utils", "os2mo", "fastapi", "utils"]
+include = ["os2mo_fastapi_utils/py.typed"]
 
 [build-system]
 requires = [
