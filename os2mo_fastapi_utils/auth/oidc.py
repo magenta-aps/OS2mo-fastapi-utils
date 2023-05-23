@@ -1,6 +1,5 @@
 # SPDX-FileCopyrightText: 2019-2020 Magenta ApS
 # SPDX-License-Identifier: MPL-2.0
-
 from typing import Any, List, Type, TypeVar, Union
 
 import jwt.exceptions
@@ -123,14 +122,14 @@ def get_auth_exception_handler(logger: Any):
         request: Request, err: AuthenticationError
     ) -> JSONResponse:
         if err.is_client_side_error():
-            logger.exception("Client side authentication error", exception=err.exc)
+            logger.exception("Client side authentication error", exc_info=err)
             return JSONResponse(
                 status_code=HTTP_401_UNAUTHORIZED,
                 content={"status": "Unauthorized", "msg": str(err.exc)},
             )
 
         logger.exception(
-            "Problem communicating with the Keycloak server", exception=err.exc
+            "Problem communicating with the Keycloak server", exc_info=err
         )
 
         return JSONResponse(
