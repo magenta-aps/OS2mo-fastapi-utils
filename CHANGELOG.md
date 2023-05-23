@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+1.3.2 - 2023-05-23
+------------------
+
+fix: [#56049] properly log authentication exceptions
+
 1.3.1 - 2023-04-04
 ------------------
 
