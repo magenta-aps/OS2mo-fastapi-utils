@@ -1,10 +1,12 @@
 # SPDX-FileCopyrightText: 2021 Magenta ApS
 # SPDX-License-Identifier: MPL-2.0
-
-from typing import Optional, Set
+from typing import Optional
+from typing import Set
 from uuid import UUID
 
-from pydantic import BaseModel, EmailStr, Extra
+from pydantic import BaseModel
+from pydantic import EmailStr
+from pydantic import Extra
 
 
 class RealmAccess(BaseModel):

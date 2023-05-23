@@ -1,13 +1,15 @@
 # SPDX-FileCopyrightText: Magenta ApS
 #
 # SPDX-License-Identifier: MPL-2.0
+from typing import Any
+from typing import no_type_check
+from typing import Optional
+from typing import TYPE_CHECKING
 
-from typing import TYPE_CHECKING, Any, Optional, no_type_check
-
-from pydantic.errors import UrlHostError, UrlPortError
-from pydantic.fields import ModelField
-from pydantic.main import BaseConfig
-from pydantic.networks import ascii_domain_regex, int_domain_regex
+from pydantic.errors import UrlHostError
+from pydantic.errors import UrlPortError
+from pydantic.networks import ascii_domain_regex
+from pydantic.networks import int_domain_regex
 from pydantic.validators import str_validator
 
 if TYPE_CHECKING:  # pragma: no cover

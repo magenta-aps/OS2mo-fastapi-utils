@@ -3,28 +3,27 @@
 import asyncio
 import unittest.mock
 from datetime import datetime
-from uuid import UUID, uuid4
+from uuid import UUID
+from uuid import uuid4
 
 import jwt
 from cryptography.hazmat.primitives import serialization
 from fastapi.exceptions import HTTPException
-from jwt.exceptions import (
-    ExpiredSignatureError,
-    InvalidAudienceError,
-    InvalidSignatureError,
-    InvalidTokenError,
-    PyJWTError,
-)
+from jwt.exceptions import ExpiredSignatureError
+from jwt.exceptions import InvalidAudienceError
+from jwt.exceptions import InvalidSignatureError
+from jwt.exceptions import InvalidTokenError
+from jwt.exceptions import PyJWTError
 from pydantic import ValidationError
-from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_500_INTERNAL_SERVER_ERROR
+from starlette.status import HTTP_401_UNAUTHORIZED
+from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 from structlog import get_logger
 
 from os2mo_fastapi_utils.auth.exceptions import AuthenticationError
-from os2mo_fastapi_utils.auth.models import RealmAccess, Token
-from os2mo_fastapi_utils.auth.oidc import (
-    get_auth_dependency,
-    get_auth_exception_handler,
-)
+from os2mo_fastapi_utils.auth.models import RealmAccess
+from os2mo_fastapi_utils.auth.models import Token
+from os2mo_fastapi_utils.auth.oidc import get_auth_dependency
+from os2mo_fastapi_utils.auth.oidc import get_auth_exception_handler
 
 
 class TestOIDC(unittest.TestCase):

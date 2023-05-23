@@ -1,12 +1,18 @@
 # SPDX-FileCopyrightText: 2019-2020 Magenta ApS
 # SPDX-License-Identifier: MPL-2.0
-from typing import Any, List, Type, TypeVar, Union
+from typing import Any
+from typing import List
+from typing import Type
+from typing import TypeVar
+from typing import Union
 
 import jwt.exceptions
-from fastapi import Depends, Request
+from fastapi import Depends
+from fastapi import Request
 from fastapi.security import OAuth2PasswordBearer
 from starlette.responses import JSONResponse
-from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_500_INTERNAL_SERVER_ERROR
+from starlette.status import HTTP_401_UNAUTHORIZED
+from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 
 from os2mo_fastapi_utils.auth.exceptions import AuthenticationError
 from os2mo_fastapi_utils.auth.models import Token
@@ -128,9 +134,7 @@ def get_auth_exception_handler(logger: Any):
                 content={"status": "Unauthorized", "msg": str(err.exc)},
             )
 
-        logger.exception(
-            "Problem communicating with the Keycloak server", exc_info=err
-        )
+        logger.exception("Problem communicating with the Keycloak server", exc_info=err)
 
         return JSONResponse(
             status_code=HTTP_500_INTERNAL_SERVER_ERROR,
