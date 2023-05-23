@@ -1,114 +1,42 @@
-# SPDX-FileCopyrightText: Magenta ApS
-#
+# SPDX-FileCopyrightText: Magenta ApS <https://magenta.dk>
 # SPDX-License-Identifier: MPL-2.0
 
-################################################################################
-# Changes to this file requires approval from Labs. Please add a person from   #
-# Labs as required approval to your MR if you have any changes.                #
-################################################################################
-
-# For `twine upload` to work, the following envionment variables have to set in
-# the Gitlab UI.
-# RELEASE_PYPI_USERNAME
-# RELEASE_PYPI_PASSWORD
+variables:
+  PRECOMMIT_USE_POETRY: "true"
+  POETRY_VERSION: "1.3"
+  PYTEST_COV_MODULE: os2mo_fastapi_utils
+  PYTEST_COV_FAIL_UNDER: 0
 
 stages:
   - lint
   - test
+  - coverage
   - release
   - deploy
 
+
+# Global Conditions
+.if-default-branch-refs: &if-default-branch-refs
+  if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+.if-tag: &if-tag
+  if: '$CI_COMMIT_TAG'
+
+.if-merge-request: &if-merge-request
+  if: '$CI_MERGE_REQUEST_IID'
+
+
+workflow:
+  rules:
+    - <<: *if-tag
+    - <<: *if-default-branch-refs
+    - <<: *if-merge-request
+
+
 include:
-  - project: 'labs/salt-automation'
-    ref: 'master'
-    file: '/gitlab-ci-templates/common/autopub.v1.yml'
-
-# Lint stage
-#############
-
-.lint-default: &lint-default
-  stage: lint
-  needs: []
-  image: python:3.7
-  services: []
-
-TypeCheck Python:
-  <<: *lint-default
-  before_script:
-    - pip3 install -e .[lint]
-  script:
-    - python -m mypy --ignore-missing-imports --strict-optional --no-implicit-optional --namespace-packages os2mo_fastapi_utils tests
-
-Lint Python:
-  <<: *lint-default
-  before_script:
-    - pip3 install -e .[lint]
-  script:
-    - python -m black --diff --check os2mo_fastapi_utils tests
-    - python -m isort --profile black --diff --check-only os2mo_fastapi_utils tests
-
-REUSE compliance:
-  <<: *lint-default
-  image:
-    name: fsfe/reuse:latest
-    entrypoint: [""]
-  script:
-    - reuse lint
-
-# Test stage
-############
-
-.test-default: &test-default
-  stage: test
-  needs: []
-  services: []
-  before_script:
-    - pip3 install -e .[test]
-
-Unit-test:
-  <<: *test-default
-  image: python:3.7
-  script:
-    - pytest
-      --cov=os2mo_fastapi_utils
-      --junitxml $CI_PROJECT_DIR/junit.xml
-      --cov-report html:$CI_PROJECT_DIR/coverage-html
-      --cov-report term
-      -p no:cacheprovider
-      --color=yes
-      tests/
-  coverage: '/TOTAL.*\s+(\d+%)$/'
-  artifacts:
-    when: always
-    paths:
-      - $CI_PROJECT_DIR/coverage-html
-    reports:
-      junit: $CI_PROJECT_DIR/junit.xml
-
-
-# Release stage
-###############
-
-.release-default: &release-default
-  stage: release
-  needs: ["Unit-test"]
-  image: python:3.7
-  services: []
-  before_script:
-    - pip3 install -e .[dist]
-    - python3 -m build
-
-Release dev:
-  <<: *release-default
-  rules:
-    - if: $CI_COMMIT_REF_NAME == "master"
-  script:
-    - python3 -m twine upload --username ${RELEASE_PYPI_USERNAME} --password ${RELEASE_PYPI_PASSWORD} --repository testpypi dist/*
-
-Release master:
-  <<: *release-default
-  rules:
-      # Matches <version core> from SemVer 2.0.0 BNF grammar. Ex. 2.3.4, but not 2.3.4-rc
-      - if: $CI_COMMIT_TAG =~ /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/
-  script:
-    - python3 -m twine upload --username ${RELEASE_PYPI_USERNAME} --password ${RELEASE_PYPI_PASSWORD} --repository pypi dist/*
+  - project: labs/salt-automation
+    file:
+      - gitlab-ci-templates/common/conventional-commits.v1.yml
+      - gitlab-ci-templates/common/pre-commit.v1.yml
+      - gitlab-ci-templates/python/pytest.v1.yml
+      - gitlab-ci-templates/python/pypi-cc.v1.yml

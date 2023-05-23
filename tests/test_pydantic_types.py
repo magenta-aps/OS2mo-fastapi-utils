@@ -1,12 +1,13 @@
 # SPDX-FileCopyrightText: Magenta ApS
 #
 # SPDX-License-Identifier: MPL-2.0
-
 from unittest import TestCase
 
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel
+from pydantic import ValidationError
 
-from os2mo_fastapi_utils.pydantic_types import Domain, Port
+from os2mo_fastapi_utils.pydantic_types import Domain
+from os2mo_fastapi_utils.pydantic_types import Port
 
 
 class PortModel(BaseModel):
@@ -21,7 +22,7 @@ class TypeTests(TestCase):
     def test_create_port(self):
         port = Port(80)
         self.assertEqual(repr(port), "Port(80)")
-        self.assertEqual(str(port), "80")
+        self.assertEqual(str(port), "Port(80)")
 
         other_port = Port(80)
         self.assertEqual(port, other_port)

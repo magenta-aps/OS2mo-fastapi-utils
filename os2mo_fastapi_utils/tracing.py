@@ -1,13 +1,12 @@
 # SPDX-FileCopyrightText: Magenta ApS
 #
 # SPDX-License-Identifier: MPL-2.0
-
 from contextlib import contextmanager
-from typing import List, Optional
-from uuid import UUID
+from typing import Optional
 
 import structlog
-from fastapi import Request, Response
+from fastapi import Request
+from fastapi import Response
 from opentelemetry import trace
 from opentelemetry.exporter.jaeger.thrift import JaegerExporter
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
@@ -17,17 +16,15 @@ from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
-from pydantic import BaseSettings, HttpUrl
-from pydantic.tools import parse_obj_as
+from pydantic import BaseSettings
 from structlog import get_logger
-from structlog.contextvars import (
-    bind_contextvars,
-    clear_contextvars,
-    merge_contextvars,
-    unbind_contextvars,
-)
+from structlog.contextvars import bind_contextvars
+from structlog.contextvars import clear_contextvars
+from structlog.contextvars import merge_contextvars
+from structlog.contextvars import unbind_contextvars
 
-from os2mo_fastapi_utils.pydantic_types import Domain, Port
+from os2mo_fastapi_utils.pydantic_types import Domain
+from os2mo_fastapi_utils.pydantic_types import Port
 
 
 class TracingSettings(BaseSettings):

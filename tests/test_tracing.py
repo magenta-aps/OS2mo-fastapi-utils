@@ -2,16 +2,14 @@
 #
 # SPDX-License-Identifier: MPL-2.0
 from unittest import TestCase
-from unittest.mock import patch
 
-import structlog
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from starlette.datastructures import Address
 from structlog import get_logger
-from structlog.testing import CapturedCall, CapturingLoggerFactory
+from structlog.testing import CapturingLoggerFactory
 
-from os2mo_fastapi_utils.tracing import setup_instrumentation, setup_logging
+from os2mo_fastapi_utils.tracing import setup_instrumentation
+from os2mo_fastapi_utils.tracing import setup_logging
 
 
 def create_app():
@@ -56,7 +54,7 @@ class TracingTests(TestCase):
         cf = CapturingLoggerFactory()
         setup_logging(logger_factory=cf)
 
-        response = self.client.get("/")
+        self.client.get("/")
         self.assertEqual(len(cf.logger.calls), 3)
 
         logmsg = cf.logger.calls[0].kwargs
@@ -86,7 +84,7 @@ class TracingTests(TestCase):
         cf = CapturingLoggerFactory()
         setup_logging(logger_factory=cf)
 
-        response = self.client.get("/")
+        self.client.get("/")
         self.assertGreaterEqual(len(cf.logger.calls), 1)
 
         logmsg = cf.logger.calls[0].kwargs
@@ -96,7 +94,7 @@ class TracingTests(TestCase):
         cf = CapturingLoggerFactory()
         setup_logging(logger_factory=cf)
 
-        response = self.client.get("/", headers={"X-Request-ID": request_id})
+        self.client.get("/", headers={"X-Request-ID": request_id})
         self.assertGreaterEqual(len(cf.logger.calls), 1)
 
         logmsg = cf.logger.calls[0].kwargs
@@ -107,7 +105,7 @@ class TracingTests(TestCase):
         cf = CapturingLoggerFactory()
         setup_logging(logger_factory=cf)
 
-        response = self.client.get("/", headers={"x-rEqUeSt-Id": request_id})
+        self.client.get("/", headers={"x-rEqUeSt-Id": request_id})
         self.assertGreaterEqual(len(cf.logger.calls), 1)
 
         logmsg = cf.logger.calls[0].kwargs
